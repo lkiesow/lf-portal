@@ -1,0 +1,139 @@
+body {
+	font-family: sans-serif;
+	background: #eee;
+}
+
+h1, h2, h3 {
+	color: #377BA8;
+}
+
+h1, h2 {
+	margin: 15px;
+}
+
+h3 {
+	margin: 0;
+	font-size: 1.05em;
+}
+
+.page {
+	margin: 2em auto;
+	width: 1100px;
+	border: 5px solid #ccc;
+	padding: 0em;
+	background: white;
+}
+
+.episodes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.episodes li {
+	margin: 15px 35px;
+	display: inline-block;
+	width: 290px;
+	vertical-align: top;
+}
+
+.episodes li span {
+	display: inline-block;
+	width: 288px;
+	height: 162px;
+	overflow: hidden;
+	padding: 0px;
+}
+
+.episodes li div {
+	padding: 10px;
+}
+
+.episodes li img {
+	width: 288px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.pager {
+	list-style: none;
+	padding: 0;
+	text-align: center;
+}
+
+.pager li {
+	margin: 2x 2px;
+	padding: 0px;
+	display: inline-block;
+}
+
+.pager li a {
+	display: inline-block;
+	text-decoration: none;
+	background-color: #ddd;
+	width: 35px;
+	height: 25px;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.pager li a:hover {
+	background-color: #bbb;
+}
+
+.add-entry {
+	font-size: 0.9em;
+	border-bottom: 1px solid #ccc;
+}
+
+.add-entry dl {
+	font-weight: bold;
+}
+
+nav {
+	width: 50%;
+	display: inline-block;
+	padding: 0px;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	margin-bottom: 1em;
+	background: #fafafa;
+	vertical-align: bottom;
+}
+
+nav a {
+	display: inline-block;
+	text-decoration: none;
+	padding: 5px 15px;
+	margin: 0px;
+	border: none;
+	color: black;
+}
+
+nav form {
+	display: inline-block;
+	padding: 0px 15px;
+	margin: 0px;
+}
+
+nav form input {
+	margin: 2px 0px;
+}
+
+nav:nth-child(3) {
+	text-align: right;
+}
+
+nav a:hover {
+	background: #eee;
+}
+
+.flash {
+	background: #CEE5F5;
+	padding: 0.5em;
+	border: 1px solid #AACBE2; }
+
+.error {
+	background: #F0D6D6;
+	padding: 0.5em;
+}

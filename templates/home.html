@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>New Recordings:</h2>
+<ul class=episodes>
+	{% for ep in new_episodes %}
+	<li>
+		<span><img src="{{ ep.img }}" /></span>
+		<div>
+			<h3>{{ ep.title }}</h3>
+			{{ ep.seriestitle|safe }}
+		<div>
+	</li>
+	{% else %}
+	<li><em>Unbelievable.  No videos here so far</em></li>
+	{% endfor %}
+</ul>
+
+<h2>Random Picks:</h2>
+<ul class=episodes>
+	{% for ep in random_episodes %}
+	<li>
+		<span><img src="{{ ep.img }}" /></span>
+		<div>
+			<h3>{{ ep.title }}</h3>
+			{{ ep.seriestitle|safe }}
+		<div>
+	</li>
+	{% else %}
+	<li><em>Unbelievable.  No videos here so far</em></li>
+	{% endfor %}
+</ul>
+{% endblock %}

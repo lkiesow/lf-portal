@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Lecture Series:</h2>
+<ul class=series>
+	{% for s in series %}
+	<li>
+		<div>
+			<h3>{{ s.title }}</h3>
+			{{ s.creator|safe }}
+		<div>
+	</li>
+	{% else %}
+	<li><em>Unbelievable.  No series here so far</em></li>
+	{% endfor %}
+</ul>
+
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	<a href="{{ url_for('lectures') }}?page={{ p }}">{{ p }}</a>
+	</li>
+	{% else %}
+	<li>1</li>
+	{% endfor %}
+</ul>
+{% endblock %}
