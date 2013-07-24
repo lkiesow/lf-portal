@@ -9,49 +9,59 @@
 	:copyright: (c) 2010 by Armin Ronacher.
 	:license: BSD, see LICENSE for more details.
 """
-from __future__ import with_statement
-from sqlite3 import dbapi2 as sqlite3
+from functools import wraps
 from flask import Flask, request, session, g, redirect, url_for, abort, \
 		render_template, flash, _app_ctx_stack
 import urllib
 import urllib2
 from xml.dom.minidom import parseString
 import random
+import pylibmc
 
 # configuration
 SEARCH_SERVICE = 'http://video2.virtuos.uos.de:8080/search/'
 ENGAGE_SERVICE = 'http://video2.virtuos.uos.de:8080/engage/'
 SPRING_SECURITY_SERVICE = 'http://video2.virtuos.uos.de:8080/j_spring_security_check'
-SECRET_KEY = 'development key'
+SECRET_KEY      = 'development key'
 SERIES_PER_PAGE = 50
+
+USE_MEMCACHD    = True
+MEMCACHED_HOST  = 'localhost'
+CACHE_TIME_SEC  = 600
 
 # create our little application :)
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 
-def get_db():
-	"""Opens a new database connection if there is none yet for the
-	current application context.
-	"""
+def get_mc():
+	'''Returns a Memcached client. If there is none for the current application
+	context it will create a new.
 	'''
 	top = _app_ctx_stack.top
-	if not hasattr(top, 'sqlite_db'):
-		sqlite_db = sqlite3.connect(app.config['DATABASE'])
-		sqlite_db.row_factory = sqlite3.Row
-		top.sqlite_db = sqlite_db
-
-	return top.sqlite_db
-	'''
-	pass
+	if not hasattr(top, 'memcached_cli'):
+		top.memcached_cli = pylibmc.Client(
+				[app.config['MEMCACHED_HOST']], binary = True,
+				behaviors = {'tcp_nodelay': True, 'ketama': True})
+	return top.memcached_cli
 
 
-@app.teardown_appcontext
-def close_db_connection(exception):
-	"""Closes the database again at the end of the request."""
-	top = _app_ctx_stack.top
-	if hasattr(top, 'sqlite_db'):
-		top.sqlite_db.close()
+def cached(time=app.config['CACHE_TIME_SEC']):
+	def decorator(f):
+		@wraps(f)
+		def decorated(*args, **kwargs):
+			if not app.config['CACHE_TIME_SEC']:
+				return f(*args, **kwargs)
+			mc = get_mc()
+			key = 'lf_portal_' + request.url \
+					+ str(request.cookies.get('JSESSIONID'))
+			result = mc.get(key)
+			if not result:
+				result = f(*args, **kwargs)
+				mc.set(key, result, time)
+			return result
+		return decorated
+	return decorator
 
 
 def request_data(what, limit, offset, id=None, sid=None, q=None):
@@ -124,6 +134,7 @@ def prepare_series(data):
 
 
 @app.route('/')
+@cached(10)
 def home():
 	data = request_data('episode',6,0)
 	total = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
@@ -143,8 +154,8 @@ def home():
 
 @app.route('/lectures')
 @app.route('/lectures/<int:page>')
+@cached()
 def lectures(page=1):
-	#page  = int(request.args.get('page') or 1)
 	page -= 1
 
 	data = request_data('series', app.config['SERIES_PER_PAGE'], 
@@ -166,6 +177,7 @@ def episode(id):
 
 
 @app.route('/series/<id>')
+@cached()
 def series(id):
 	data     = request_data('series', 1, 0, id=id)
 	series   = prepare_series(data)
@@ -179,6 +191,7 @@ def series(id):
 
 @app.route('/search')
 @app.route('/search/<int:page>')
+@cached()
 def search(page=1):
 	page -= 1
 	q     = request.args.get('q')
@@ -196,18 +209,6 @@ def search(page=1):
 
 	return render_template('search.html', series=series, episodes=episodes,
 			pages=pages, activepage=page)
-
-
-@app.route('/add', methods=['POST'])
-def add_entry():
-	if not session.get('logged_in'):
-		abort(401)
-	db = get_db()
-	db.execute('insert into entries (title, text) values (?, ?)',
-			[request.form['title'], request.form['text']])
-	db.commit()
-	flash('New entry was successfully posted')
-	return redirect(url_for('home'))
 
 
 class NoRedirection(urllib2.HTTPErrorProcessor):
