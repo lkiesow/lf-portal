@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{{ series.title }}</h2>
+<div class=infoblock>
+	{% for c in series.creator %}
+	<span>{{ c }}</span>
+	{% endfor %}
+	{% for c in series.contributor %}
+	<span>{{ c }}</span>
+	{% endfor %}
+</div>
+
+<ul class=episodes>
+	{% for ep in episodes %}
+	<li><a href="{{ url_for('episode', id=ep.id) }}">
+		<span><img src="{{ ep.img }}" /></span>
+		<div>
+			<h3>{{ ep.title }}</h3>
+			{{ ep.seriestitle|safe }}
+		<div>
+	</a></li>
+	{% else %}
+	<li><em>Unbelievable.  No videos here so far</em></li>
+	{% endfor %}
+</ul>
+{% endblock %}

@@ -1,13 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
-<h2>Lecture Series:</h2>
+<h2>Lecture Series</h2>
 <ul class=series>
 	{% for s in series %}
 	<li>
-		<div>
+		<a href="{{ url_for('series', id=s.id) }}">
 			<h3>{{ s.title }}</h3>
-			{{ s.creator|safe }}
-		<div>
+			{% for c in s.creator %}
+			<span>{{ c }}</span>
+			{% endfor %}
+			{% for c in s.contributor %}
+			<span>{{ c }}</span>
+			{% endfor %}
+			{% if s.description %}
+			<p>{{ s.description }}</p>
+			{% endif %}
+		</a>
 	</li>
 	{% else %}
 	<li><em>Unbelievable.  No series here so far</em></li>

@@ -19,6 +19,7 @@ import random
 
 # configuration
 SEARCH_SERVICE = 'http://video2.virtuos.uos.de:8080/search/'
+ENGAGE_SERVICE = 'http://video2.virtuos.uos.de:8080/engage/'
 SECRET_KEY = 'development key'
 SERIES_PER_PAGE = 50
 
@@ -51,9 +52,16 @@ def close_db_connection(exception):
 		top.sqlite_db.close()
 
 
-def request_data(what, limit, offset):
-	req  = urllib2.Request('%s%s.xml?limit=%i&offset=%i' % \
-			( app.config['SEARCH_SERVICE'], what, limit, offset ))
+def request_data(what, limit, offset, id=None, sid=None, q=None):
+	url  = '%s%s.xml?limit=%i&offset=%i' % \
+			( app.config['SEARCH_SERVICE'], what, limit, offset )
+	if id:
+		url += '&id=%s' % id
+	if sid:
+		url += '&sid=%s' % sid
+	if q:
+		url += '&q=%s' % q
+	req  = urllib2.Request(url)
 	'''
 	if cookie:
 		req.add_header('cookie', 'session="%s"; Path=/; HttpOnly' % cookie)
@@ -99,16 +107,13 @@ def prepare_series(data):
 			continue
 		id = result.getAttribute('id')
 		title       = get_xml_val(result, 'dcTitle')
+		description = get_xml_val(result, 'dcDescription')
 
-		creator     = []
-		for c in result.getElementsByTagNameNS('*', 'dcCreator'):
-			creator.append( c.childNodes[0].data )
-		creator = ', '.join(creator)
+		creator     = [ c.childNodes[0].data 
+				for c in result.getElementsByTagNameNS('*', 'dcCreator') ]
 
-		contributor = []
-		for c in result.getElementsByTagNameNS('*', 'dcContributor'):
-			contributor.append( c.childNodes[0].data )
-		contributor = ', '.join(contributor)
+		contributor = [ c.childNodes[0].data 
+				for c in result.getElementsByTagNameNS('*', 'dcContributor') ]
 
 		series.append( {'id':id, 'title':title, 'creator':creator,
 			'contributor':contributor} )
@@ -135,7 +140,7 @@ def home():
 
 @app.route('/lectures')
 def lectures():
-	page  = int(request.args.get('page')) or 1
+	page  = int(request.args.get('page') or 1)
 	page -= 1
 
 	data = request_data('series', app.config['SERIES_PER_PAGE'], 
@@ -145,6 +150,48 @@ def lectures():
 
 	pages = [ p+1 for p in xrange(int(total) / app.config['SERIES_PER_PAGE']) ]
 	return render_template('lectures.html', series=series, pages=pages, activepage=page)
+
+
+@app.route('/episode/<id>')
+def episode(id):
+	data    = request_data('episode', 1, 0, id=id)
+	episode = prepare_episode(data)
+	episode = episode[0] if episode else None
+	return render_template('episode.html', episode=episode, 
+			engage=app.config['ENGAGE_SERVICE'])
+
+
+@app.route('/series/<id>')
+def series(id):
+	data     = request_data('series', 1, 0, id=id)
+	series   = prepare_series(data)
+	series   = series[0] if series else None
+
+	data     = request_data('episode', 999, 0, sid=series.get('id'))
+	episodes = prepare_episode(data)
+
+	return render_template('series.html', series=series, episodes=episodes)
+
+
+@app.route('/search')
+def search():
+	page  = int(request.args.get('page') or 1)
+	page -= 1
+	q     = request.args.get('q')
+
+	series = []
+	if not page:
+		data     = request_data('series', 9999, 0, q=q)
+		series   = prepare_series(data)
+
+	data     = request_data('episode', 9, 0, q=q)
+	total    = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
+	episodes = prepare_episode(data)
+
+	pages = [ p+1 for p in xrange(int(total) / 9) ]
+
+	return render_template('search.html', series=series, episodes=episodes,
+			pages=pages, activepage=page)
 
 
 @app.route('/add', methods=['POST'])

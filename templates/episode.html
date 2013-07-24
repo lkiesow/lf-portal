@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class=episodeview>
+	<nav>
+		<span>Lectures</span>
+		<span>→</span>
+		<a href="{{ url_for('series', id=episode.series) }}">{{ episode.seriestitle|safe }}</a>
+	</nav>
+	<h2>{{ episode.title }}</h2>
+	<!--
+	<img src="{{ episode.img }}" />
+	-->
+	<div class=videocontainer>
+		<iframe src="{{ engage }}ui/watch.html?id={{ episode.id }}"></iframe>
+	</div>
+	
+</div>
+{% endblock %}

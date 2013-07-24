@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if activepage == 0 %}
+<h2>Series</h2>
+<div class=series_compact>
+	{% for s in series %}
+	<a href="{{ url_for('series', id=s.id) }}">
+		<h3>{{ s.title }}</h3>
+		{% for c in s.creator %}
+		<span>{{ c }}</span>
+		{% endfor %}
+	</a>
+	{% endfor %}
+</div>
+{% endif %}
+
+<h2>Recordings</h2>
+<ul class=episodes>
+	{% for ep in episodes %}
+	<li><a href="{{ url_for('episode', id=ep.id) }}">
+		<span><img src="{{ ep.img }}" /></span>
+		<div>
+			<h3>{{ ep.title }}</h3>
+			{{ ep.seriestitle|safe }}
+		<div>
+	</a></li>
+	{% else %}
+	<li><em>Unbelievable.  No videos here so far</em></li>
+	{% endfor %}
+</ul>
+
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	<a href="{{ request.url }}&page={{ p }}">{{ p }}</a>
+	</li>
+	{% else %}
+	<li>1</li>
+	{% endfor %}
+</ul>
+{% endblock %}
