@@ -25,7 +25,7 @@
 <ul class=pager>
 	{% for p in pages %}
 	<li>
-	<a href="{{ url_for('lectures') }}?page={{ p }}">{{ p }}</a>
+	<a href="{{ url_for('lectures', page=p) }}">{{ p }}</a>
 	</li>
 	{% else %}
 	<li>1</li>

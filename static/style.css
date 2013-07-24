@@ -111,7 +111,7 @@ a {
 .episodeview iframe {
 	display: block;
 	width: 100%;
-	height: 1000px;
+	height: 1200px;
 	margin-top: -90px;
 	border: none;
 	overflow: hidden;
@@ -193,6 +193,10 @@ nav a:hover {
 	width: 300px;
 }
 
+.series_compact div {
+	padding-left: 20px;
+}
+
 .series_compact a:hover {
 	background-color: #ddd;
 }
@@ -224,12 +228,12 @@ nav a:hover {
 	background-color: #fff;
 }
 
-.flash {
-	background: #CEE5F5;
-	padding: 0.5em;
-	border: 1px solid #AACBE2; }
+.loginform {
+	width: 350px;
+	margin: 35px auto;
+}
 
-.error {
-	background: #F0D6D6;
-	padding: 0.5em;
+.loginform dt, .loginform dd {
+	display: inline-block;
+	min-width: 100px;
 }

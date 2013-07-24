@@ -13,6 +13,7 @@ from __future__ import with_statement
 from sqlite3 import dbapi2 as sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
 		render_template, flash, _app_ctx_stack
+import urllib
 import urllib2
 from xml.dom.minidom import parseString
 import random
@@ -20,6 +21,7 @@ import random
 # configuration
 SEARCH_SERVICE = 'http://video2.virtuos.uos.de:8080/search/'
 ENGAGE_SERVICE = 'http://video2.virtuos.uos.de:8080/engage/'
+SPRING_SECURITY_SERVICE = 'http://video2.virtuos.uos.de:8080/j_spring_security_check'
 SECRET_KEY = 'development key'
 SERIES_PER_PAGE = 50
 
@@ -62,10 +64,11 @@ def request_data(what, limit, offset, id=None, sid=None, q=None):
 	if q:
 		url += '&q=%s' % q
 	req  = urllib2.Request(url)
-	'''
+	
+	cookie = request.cookies.get('JSESSIONID')
 	if cookie:
 		req.add_header('cookie', 'session="%s"; Path=/; HttpOnly' % cookie)
-	'''
+
 	req.add_header('Accept', 'application/xml')
 	u = urllib2.urlopen(req)
 	try:
@@ -139,8 +142,9 @@ def home():
 
 
 @app.route('/lectures')
-def lectures():
-	page  = int(request.args.get('page') or 1)
+@app.route('/lectures/<int:page>')
+def lectures(page=1):
+	#page  = int(request.args.get('page') or 1)
 	page -= 1
 
 	data = request_data('series', app.config['SERIES_PER_PAGE'], 
@@ -174,8 +178,8 @@ def series(id):
 
 
 @app.route('/search')
-def search():
-	page  = int(request.args.get('page') or 1)
+@app.route('/search/<int:page>')
+def search(page=1):
 	page -= 1
 	q     = request.args.get('q')
 
@@ -206,26 +210,57 @@ def add_entry():
 	return redirect(url_for('home'))
 
 
+class NoRedirection(urllib2.HTTPErrorProcessor):
+	def http_response(self, request, response):
+		return response
+
+	https_response = http_response
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	error = None
 	if request.method == 'POST':
-		if request.form['username'] != app.config['USERNAME']:
-			error = 'Invalid username'
-		elif request.form['password'] != app.config['PASSWORD']:
-			error = 'Invalid password'
-		else:
-			session['logged_in'] = True
-			flash('You were logged in')
-			return redirect(url_for('home'))
-		return render_template('login.html', error=error)
+		# Prepare data
+		data = {
+				'j_username': request.form['username'],
+				'j_password': request.form['password'] }
+		try:
+			'''
+			req  = urllib2.Request(app.config['SPRING_SECURITY_SERVICE'])
+			req.add_data(urllib.urlencode(data))
+			u = urllib2.urlopen(req)
+			'''
+			opener = urllib2.build_opener(NoRedirection)
+			u = opener.open(app.config['SPRING_SECURITY_SERVICE'],
+					urllib.urlencode(data))
+			if '/login.html' in u.headers.get('location'):
+				return render_template('login.html',
+						error='Could not log in. Incorrect credentials?')
+			cookie = u.headers.get('Set-Cookie')
+			u.close()
+
+			response = redirect(url_for('home'))
+			response.headers['Set-Cookie'] = cookie
+			return response
+
+		except urllib2.HTTPError as e:
+			if e.code == 404:
+				return render_template('login.html',
+						error='Login service returned error. Please report this.')
+			if e.code == 401:
+				return render_template('login.html',
+						error='Could not log in. Incorrect credentials?')
+			raise e
+
+	return render_template('login.html')
 
 
 @app.route('/logout')
 def logout():
-	session.pop('logged_in', None)
-	flash('You were logged out')
-	return redirect(url_for('show_entries'))
+	response = redirect(url_for('home'))
+	response.headers['Set-Cookie'] = 'JSESSIONID=x; Expires=Wed, 09 Jun 1980 10:18:14 GMT'
+	return response
 
 
 if __name__ == '__main__':

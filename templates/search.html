@@ -10,6 +10,8 @@
 		<span>{{ c }}</span>
 		{% endfor %}
 	</a>
+	{% else %}
+	<div><em>No series matching this query</em></div>
 	{% endfor %}
 </div>
 {% endif %}
@@ -25,14 +27,14 @@
 		<div>
 	</a></li>
 	{% else %}
-	<li><em>Unbelievable.  No videos here so far</em></li>
+	<li><em>No videos matching this query</em></li>
 	{% endfor %}
 </ul>
 
 <ul class=pager>
 	{% for p in pages %}
 	<li>
-	<a href="{{ request.url }}&page={{ p }}">{{ p }}</a>
+	<a href="{{ url_for('search', page=p) }}?q={{ request.args.get('q') }}">{{ p }}</a>
 	</li>
 	{% else %}
 	<li>1</li>

@@ -14,10 +14,10 @@
 			/><input type="submit" value="⌕" /> 
 		</form>
 
-		{% if not session.logged_in %}
-		<a href="{{ url_for('login') }}">Log in</a>
-		{% else %}
+		{% if request.cookies.get('JSESSIONID') %}
 		<a href="{{ url_for('logout') }}">Log out</a>
+		{% else %}
+		<a href="{{ url_for('login') }}">Log in</a>
 		{% endif %}
 	</nav>
 	{% for message in get_flashed_messages() %}
