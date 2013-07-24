@@ -18,18 +18,22 @@ from xml.dom.minidom import parseString
 import random
 import pylibmc
 
-# configuration
-SEARCH_SERVICE = 'http://video2.virtuos.uos.de:8080/search/'
-ENGAGE_SERVICE = 'http://video2.virtuos.uos.de:8080/engage/'
-SPRING_SECURITY_SERVICE = 'http://video2.virtuos.uos.de:8080/j_spring_security_check'
-SECRET_KEY      = 'development key'
-SERIES_PER_PAGE = 50
+# Configuration -----------------------------------------------------
+SEARCH_SERVICE   = 'http://video2.virtuos.uos.de:8080/search/'
+ENGAGE_SERVICE   = 'http://video2.virtuos.uos.de:8080/engage/'
+SECURITY_SERVICE = 'http://video2.virtuos.uos.de:8080/j_spring_security_check'
+SECRET_KEY       = 'development key'
+SERIES_PER_PAGE  = 50
 
-USE_MEMCACHD    = True
-MEMCACHED_HOST  = 'localhost'
-CACHE_TIME_SEC  = 600
+USE_MEMCACHD     = True
+MEMCACHED_HOST   = 'localhost:11211'
+CACHE_TIME_SEC   = 600
 
-# create our little application :)
+DEBUG            = True
+# Configuration end -------------------------------------------------
+
+
+# Create application :)
 app = Flask(__name__)
 app.config.from_object(__name__)
 
@@ -47,6 +51,10 @@ def get_mc():
 
 
 def cached(time=app.config['CACHE_TIME_SEC']):
+	'''Mark a method as to be cached. The optional argument 'time' specifies how
+	long the data should be cached. The default is the value of the
+	configuration variable 'CACHE_TIME_SEC'.
+	'''
 	def decorator(f):
 		@wraps(f)
 		def decorated(*args, **kwargs):
@@ -65,6 +73,15 @@ def cached(time=app.config['CACHE_TIME_SEC']):
 
 
 def request_data(what, limit, offset, id=None, sid=None, q=None):
+	'''Request data from the Matterhorn Search service.
+
+	:param what:   Type of data to request (series or episode).
+	:param limit:  The maximum amount of results to request.
+	:param offset: The offset of the first value to request.
+	:param id:     The id of the objects to request.
+	:param sid:    The series id of the objects to return (episodes only).
+	:param q:      A freetext search request.
+	'''
 	url  = '%s%s.xml?limit=%i&offset=%i' % \
 			( app.config['SEARCH_SERVICE'], what, limit, offset )
 	if id:
@@ -89,6 +106,11 @@ def request_data(what, limit, offset, id=None, sid=None, q=None):
 
 
 def get_xml_val(elem, name):
+	'''Get a specific value from an XML structure.
+
+	:param elem: Root element of the XML element to search in.
+	:param name: Name of the element which should be returned.
+	'''
 	try:
 		return elem.getElementsByTagNameNS('*', name)[0].childNodes[0].data
 	except IndexError:
@@ -96,6 +118,11 @@ def get_xml_val(elem, name):
 
 
 def prepare_episode(data):
+	'''Prepare a episode result XML for further usage. In other words: Extract
+	all necessary and wanted  values and put them into a dictionary.
+
+	:param data: XML structure containing the data.
+	'''
 	episodes = []
 	for media in data.getElementsByTagNameNS('*', 'mediapackage'):
 		id = media.getAttribute('id')
@@ -114,6 +141,11 @@ def prepare_episode(data):
 
 
 def prepare_series(data):
+	'''Prepare a series result XML for further usage. In other words: Extract
+	all necessary and wanted  values and put them into a dictionary.
+
+	:param data: XML structure containing the data.
+	'''
 	series = []
 	for result in data.getElementsByTagNameNS('*', 'result'):
 		if get_xml_val(result, 'mediaType') != 'Series':
@@ -134,8 +166,17 @@ def prepare_series(data):
 
 
 @app.route('/')
-@cached(10)
+@cached(20)
 def home():
+	'''Render home page:
+
+	- Get the six latest recordings
+	- Get another six random recordings
+	
+	This method is cached for only 20 seconds. This should help under heavy load.
+	But the random picks will probably be different the next time a single user
+	visits the page.
+	'''
 	data = request_data('episode',6,0)
 	total = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
 	new_episodes = prepare_episode(data)
@@ -156,6 +197,13 @@ def home():
 @app.route('/lectures/<int:page>')
 @cached()
 def lectures(page=1):
+	'''Renders the lectures page which displays a list of all available series.
+
+	This method is awfully slow and puts some stress on the server if used with
+	Matterhorn 1.3.1 due to some bugs in the Matterhorn Search service.
+	
+	The caching of this method minimizes the effect of this bug, however.
+	'''
 	page -= 1
 
 	data = request_data('series', app.config['SERIES_PER_PAGE'], 
@@ -169,6 +217,12 @@ def lectures(page=1):
 
 @app.route('/episode/<id>')
 def episode(id):
+	'''Renders the page which shows a single episode. This page is not cached to
+	prevent the cache from being filled with pages that are not so frequently
+	viewed.
+
+	:param id: Specifies the identifier of a single episode.
+	'''
 	data    = request_data('episode', 1, 0, id=id)
 	episode = prepare_episode(data)
 	episode = episode[0] if episode else None
@@ -179,6 +233,16 @@ def episode(id):
 @app.route('/series/<id>')
 @cached()
 def series(id):
+	'''Renders the page for a single series. The page will display the title,
+	the creators and contributors and a list of all recordings which belong to
+	one series.
+
+	NOTICE: There seems to be a bug in 1.3.1 (also 1.4?) which prevents the
+	search endpoint to return the episodes of a series under some mysterious
+	circumstances.
+
+	:param id: Specifies the identifier of a single series.
+	'''
 	data     = request_data('series', 1, 0, id=id)
 	series   = prepare_series(data)
 	series   = series[0] if series else None
@@ -193,6 +257,10 @@ def series(id):
 @app.route('/search/<int:page>')
 @cached()
 def search(page=1):
+	'''Renders the search page. Series results will be displayed at the top of
+	the first page. Episode results will be paged. Each page contains nine
+	episode results.
+	'''
 	page -= 1
 	q     = request.args.get('q')
 
@@ -212,6 +280,8 @@ def search(page=1):
 
 
 class NoRedirection(urllib2.HTTPErrorProcessor):
+	'''This handler will prevent httplib2 from following redirections.
+	'''
 	def http_response(self, request, response):
 		return response
 
@@ -220,6 +290,9 @@ class NoRedirection(urllib2.HTTPErrorProcessor):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+	'''Login to Matterhorn. This method will request the Matterhorn Login page
+	to obtain a session which can be used for further requests.
+	'''
 	error = None
 	if request.method == 'POST':
 		# Prepare data
@@ -227,13 +300,8 @@ def login():
 				'j_username': request.form['username'],
 				'j_password': request.form['password'] }
 		try:
-			'''
-			req  = urllib2.Request(app.config['SPRING_SECURITY_SERVICE'])
-			req.add_data(urllib.urlencode(data))
-			u = urllib2.urlopen(req)
-			'''
 			opener = urllib2.build_opener(NoRedirection)
-			u = opener.open(app.config['SPRING_SECURITY_SERVICE'],
+			u = opener.open(app.config['SECURITY_SERVICE'],
 					urllib.urlencode(data))
 			if '/login.html' in u.headers.get('location'):
 				return render_template('login.html',
@@ -259,6 +327,9 @@ def login():
 
 @app.route('/logout')
 def logout():
+	'''This will delete the cookie containing the session id for Matterhorn
+	authentication.
+	'''
 	response = redirect(url_for('home'))
 	response.headers['Set-Cookie'] = 'JSESSIONID=x; Expires=Wed, 09 Jun 1980 10:18:14 GMT'
 	return response
