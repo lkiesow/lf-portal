@@ -28,7 +28,7 @@ Technology:
 - Template based – easy design changes
 - Simple Python based WSGI application
   * Flask as WSGI framework
-  * Can be integrated into Apache HTTPd, nginx, lighthttpd, gunicorn
+  * Can be integrated into Apache, nginx, lighthttpd, gunicorn
 - memcachd for fast, cached requests
 
 Compatible with:
@@ -47,9 +47,9 @@ Compatible with:
 		of memcachd reduces the effect of the performance related issues.
 		Nevertheless, if possible, use Matterhorn 1.4.x. For details about
 		problematic bugs in 1.3.1 have a look at:
-		[MH-9800](https://opencast.jira.com/browse/MH-9800),
-		[MH-9801](https://opencast.jira.com/browse/MH-9801),
-		[MH-9802](https://opencast.jira.com/browse/MH-9802)
+		<a href="https://opencast.jira.com/browse/MH-9800">MH-9800</a>,
+		<a href="https://opencast.jira.com/browse/MH-9801">MH-9801</a>,
+		<a href="https://opencast.jira.com/browse/MH-9802">MH-9802</a>
 	</dd>
 </dl>
 
@@ -65,7 +65,7 @@ Installation
 - memcachd (optional but recommended)
   * Python memcachd module (python-memcached or pylibmc)
 - WSGI capable server (optional but strongly recommended for productive usage)
-  * Apache HTTPd, i.e. with [mod_wsgi](http://code.google.com/p/modwsgi/)
+  * Apache, i.e. with [mod_wsgi](http://code.google.com/p/modwsgi/)
   * [Gunicorn](http://gunicorn.org/)
   * For the 1k other options of deploying this see 
     [Flask: Deployment Options](http://flask.pocoo.org/docs/deploying/#deployment)
