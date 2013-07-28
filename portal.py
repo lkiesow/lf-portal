@@ -19,11 +19,33 @@ import random
 import pylibmc
 
 # Configuration -----------------------------------------------------
-SEARCH_SERVICE   = 'http://video2.virtuos.uos.de:8080/search/'
-ENGAGE_SERVICE   = 'http://video2.virtuos.uos.de:8080/engage/'
-SECURITY_SERVICE = 'http://video2.virtuos.uos.de:8080/j_spring_security_check'
+SEARCH_SERVICE   = 'http://engage.opencast.org/search/'
+SECURITY_SERVICE = 'http://engage.opencast.org/j_spring_security_check'
 SECRET_KEY       = 'development key'
 SERIES_PER_PAGE  = 50
+
+# One of: simple, track-url, included
+#   simple    Try to construct the player URL by ENGAGE_SERVICE variable and
+#             mediapackage id. Fast but reliable only in some cases. Not if
+#             there are more than one engage server and not if the IDs might
+#             have changed.
+#   track-url Try to construct the engage player URL from a random track URL.
+#             This will work in most cases. Even if there are more than one
+#             engage server. Not, however, if the tracks are served from a
+#             dedicated server which is not the engage server.
+#   included  Uses the links included in the mediapackage. This is the most
+#             reliable one. But this method only works if the links to the
+#             player are included into the mediapackage.
+ENGAGE_URL_DETECTION = 'track-url'
+
+# Set this if ENGAGE_URL_DETECTION is set to simple:
+#ENGAGE_SERVICE   = 'http://engage.opencast.org/engage/'
+
+# Set this if ENGAGE_URL_DETECTION is set to track-url:
+# The following value specifies the position of the mediapackage identifier in
+# a track URL, if split by '/':
+TRACK_ID_PART = 5
+
 
 USE_MEMCACHD     = True
 MEMCACHED_HOST   = 'localhost:11211'
@@ -130,13 +152,30 @@ def prepare_episode(data):
 		series      = get_xml_val(media, 'series')
 		seriestitle = get_xml_val(media, 'seriestitle')
 		img = None
+
+		player = None
+		if app.config['ENGAGE_URL_DETECTION'] == 'simple':
+			player = '%sui/watch.html?id=%s' % (app.config['ENGAGE_SERVICE'], id)
+		elif app.config['ENGAGE_URL_DETECTION'] == 'track-url':
+			for track in media.getElementsByTagNameNS('*', 'track'):
+				for url in track.getElementsByTagNameNS('*', 'url'):
+					url = url.childNodes[0].data
+					if not url.startswith('http'):
+						continue
+					url = url.split('/')
+					player = '%s/engage/ui/watch.html?id=%s' % (
+							'/'.join(url[:3]), 
+							url[app.config['TRACK_ID_PART']] )
+		elif app.config['ENGAGE_URL_DETECTION'] == 'included':
+			print 'TODO: Implement this'
+
 		for attachment in media.getElementsByTagNameNS('*', 'attachment'):
 			if attachment.getAttribute('type').endswith('/player+preview'):
 				img = attachment.getElementsByTagNameNS('*', 'url')[0].childNodes[0].data
 
 
 		episodes.append( {'id':id, 'title':title, 'series':series,
-			'seriestitle':seriestitle, 'img':img} )
+			'seriestitle':seriestitle, 'img':img, 'player':player} )
 	return episodes
 
 
@@ -226,8 +265,7 @@ def episode(id):
 	data    = request_data('episode', 1, 0, id=id)
 	episode = prepare_episode(data)
 	episode = episode[0] if episode else None
-	return render_template('episode.html', episode=episode, 
-			engage=app.config['ENGAGE_SERVICE'])
+	return render_template('episode.html', episode=episode)
 
 
 @app.route('/series/<id>')
