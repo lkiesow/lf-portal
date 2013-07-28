@@ -39,14 +39,19 @@ Compatible with:
 - Lernfunk2 (MH-Proxy)
 
 
-*(1)* Matterhorn 1.3.1 has some major bugs in its search service which cause
+<dl>
+	<dt>Notice:</dt>
+	<dd>
+		Matterhorn 1.3.1 has some major bugs in its search service which cause
 		performance issues and also incorrect paging of the series pages. The use
 		of memcachd reduces the effect of the performance related issues.
 		Nevertheless, if possible, use Matterhorn 1.4.x. For details about
 		problematic bugs in 1.3.1 have a look at:
-      [MH-9800](https://opencast.jira.com/browse/MH-9800) 
-		[MH-9801](https://opencast.jira.com/browse/MH-9801)
-      [MH-9802](https://opencast.jira.com/browse/MH-9802)
+		[MH-9800](https://opencast.jira.com/browse/MH-9800),
+		[MH-9801](https://opencast.jira.com/browse/MH-9801),
+		[MH-9802](https://opencast.jira.com/browse/MH-9802)
+	</dd>
+</dl>
 
 
 ------------
@@ -56,7 +61,9 @@ Installation
 **Requirements**
 
 - Python
+- Flask
 - memcachd (optional but recommended)
+  * Python memcachd module (python-memcached or pylibmc)
 - WSGI capable server (optional but strongly recommended for productive usage)
   * Apache HTTPd, i.e. with [mod_wsgi](http://code.google.com/p/modwsgi/)
   * [Gunicorn](http://gunicorn.org/)
@@ -72,15 +79,15 @@ will not perform very well. An application error might kill the whole server, �
 In other words: Do not use this method for productive systems. At least not, if
 you have more than 10 users.
 
-Notice: If you notice during the installation that packages are not in the
-repository of your distribution, use **The easy way 2** which will tell you how
-to get these packages from pypi instead.
+If you notice during the installation that packages are not in the repository
+of your distribution, use “**The easy way – 2**” which will tell you how to get
+these packages from pypi instead.
 
 1. Install Python and flask on your system:
 
 		yum install python-flask
 
-2. (optional but recommended) Install memcached and a python module for it:
+2. Install memcached and a python module for it (optional but recommended):
 
 		yum install memcached
 
@@ -89,8 +96,8 @@ to get these packages from pypi instead.
 	the faster of both modules. python-memcached on the other hand is a pure
 	python module and thus easier to port. That is why it is available on more
 	systems that pylibmc. If both modules are available, choose python-pylibmc.
-	If not, use the one which is available. It does not hurt, if both modules
-	are installed. lf-portal will use pylibmc by default.
+	If not, use the one which is available. If both modules are installed,
+	lf-portal will use pylibmc by default.
 
 		yum install libmemcached python-pylibmc
 		yum install python-memcached.noarch
@@ -111,9 +118,9 @@ to get these packages from pypi instead.
 
 4. Configure the portal:
 
-	Open portal.py in the editor of your choice and set the configuration. Just
-	go to the options at the top of the file. It should be done reasonable fast.
-	The options itself are documented in the file.
+	Open `portal.py` in the editor of your choice and set the configuration.
+	Just go to the options at the top of the file. It should be done reasonable
+	fast. The options itself are documented in the file.
 	
 5. Run lf-portal:
 
@@ -163,9 +170,9 @@ install the python modules directly from the Python Package Index:
 
 5. Configure the portal:
 
-	Open portal.py in the editor of your choice and set the configuration. Just
-	go to the options at the top of the file. It should be done reasonable fast.
-	The options itself are documented in the file.
+	Open `portal.py` in the editor of your choice and set the configuration.
+	Just go to the options at the top of the file. It should be done reasonable
+	fast. The options itself are documented in the file.
 	
 6. Run lf-portal:
 
@@ -173,10 +180,10 @@ install the python modules directly from the Python Package Index:
 
 	You can now access the portal using the web browser of your choice.
 	Remember to activate the virtual environment again each time you are in a
-	new terminal.
+	new terminal and want to (re-)start the application.
 
 
-### Deplay using Gunicorn ###
+### Deploy using Gunicorn ###
 
 Gunicorn 'Green Unicorn' is a Python WSGI HTTP Server for UNIX. It is broadly
 compatible with various web frameworks, simply implemented, light on server
@@ -220,9 +227,9 @@ You can deploy lf-portal with Gunicorn like this;
 
 5. Configure the portal:
 
-	Open portal.py in the editor of your choice and set the configuration. Just
-	go to the options at the top of the file. It should be done reasonable fast.
-	The options itself are documented in the file.
+	Open `portal.py` in the editor of your choice and set the configuration.
+	Just go to the options at the top of the file. It should be done reasonable
+	fast. The options itself are documented in the file.
 	
 6. Run lf-portal:
 
@@ -235,9 +242,9 @@ You can deploy lf-portal with Gunicorn like this;
 		gunicorn -D --pid gunicorn.pid --error-logfile gunicorn.error.log \
 			--access-logfile gunicorn.acess.log -w 4 -b 0.0.0.0:5000 portal:app
 
-	This will launch Gunicorn as deamon with four worker, will produce logfiles,
-	will be globally accessible and will produce logfiles.
+	This will launch Gunicorn as deamon with four workers. It will produce
+	logfiles and will be globally accessible on port 5000.
 
 	You can now access the portal using the web browser of your choice.
 	Remember to activate the virtual environment again each time you are in a
-	new terminal.
+	new terminal and want to (re-)start gunicorn..
