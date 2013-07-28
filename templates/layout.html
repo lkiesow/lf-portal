@@ -1,4 +1,7 @@
 <!doctype html>
+<html>
+<body>
+
 <title>lf-portal</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 <div class=page>
@@ -24,4 +27,11 @@
 	<div class=flash>{{ message }}</div>
 	{% endfor %}
 	{% block body %}{% endblock %}
+
+	<footer>
+	Powered by <a href="https://github.com/lkiesow/lf-portal">lf-portal</a>
+	</footer>
 </div>
+
+</body>
+</html>
