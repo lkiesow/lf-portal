@@ -80,7 +80,7 @@ def cached(time=app.config['CACHE_TIME_SEC']):
 	def decorator(f):
 		@wraps(f)
 		def decorated(*args, **kwargs):
-			if not app.config['CACHE_TIME_SEC']:
+			if not app.config['USE_MEMCACHD']:
 				return f(*args, **kwargs)
 			mc = get_mc()
 			key = 'lf_portal_' + request.url \
