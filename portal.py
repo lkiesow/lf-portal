@@ -96,6 +96,7 @@ def cached(time=app.config['CACHE_TIME_SEC']):
 			mc = get_mc()
 			key = 'lf_portal_' + request.url \
 					+ str(request.cookies.get('JSESSIONID'))
+			key = key.encode('utf-8')
 			result = mc.get(key)
 			if not result:
 				result = f(*args, **kwargs)
