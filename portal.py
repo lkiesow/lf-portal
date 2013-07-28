@@ -1,31 +1,18 @@
 # -*- coding: utf-8 -*-
-"""
-	Flaskr
-	~~~~~~
+'''
+	LF_Portal
+	~~~~~~~~~
 
-	A microblog example application written as Flask tutorial with
-	Flask and sqlite3.
+	A video portal for Opencast Matterhorn and compatible systems.
 
-	:copyright: (c) 2010 by Armin Ronacher.
+	:copyright: 2013 by Lars Kiesow <lkiesow@uos.de>
 	:license: BSD, see LICENSE for more details.
-"""
-from functools import wraps
-from flask import Flask, request, session, g, redirect, url_for, abort, \
-		render_template, flash, _app_ctx_stack
-import urllib
-import urllib2
-from xml.dom.minidom import parseString
-import random
-try:
-	import pylibmc
-except ImportError:
-	import memcache
+'''
 
 # Configuration -----------------------------------------------------
 SEARCH_SERVICE   = 'http://engage.opencast.org/search/'
 SECURITY_SERVICE = 'http://engage.opencast.org/j_spring_security_check'
-SECRET_KEY       = 'development key'
-SERIES_PER_PAGE  = 50
+SERIES_PER_PAGE  = 15
 
 # One of: simple, track-url, included
 #   simple    Try to construct the player URL by ENGAGE_SERVICE variable and
@@ -60,6 +47,20 @@ SERVER_HOST  = '0.0.0.0' # Set to localhost for local access only
 SERVER_PORT  = 5000
 # Configuration end -------------------------------------------------
 
+####
+# Don't change this unless you know what you are doing:
+###
+
+from functools import wraps
+from flask import Flask, request, redirect, url_for, render_template, _app_ctx_stack
+import urllib
+import urllib2
+from xml.dom.minidom import parseString
+import random
+try:
+	import pylibmc
+except ImportError:
+	import memcache
 
 # Create application :)
 app = Flask(__name__)
