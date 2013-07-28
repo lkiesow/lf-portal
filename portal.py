@@ -54,7 +54,10 @@ USE_MEMCACHD     = True
 MEMCACHED_HOST   = 'localhost:11211'
 CACHE_TIME_SEC   = 600
 
-DEBUG            = True
+# Configuration for built-in server only:
+SERVER_DEBUG = True
+SERVER_HOST  = '0.0.0.0' # Set to localhost for local access only
+SERVER_PORT  = 5000
 # Configuration end -------------------------------------------------
 
 
@@ -381,4 +384,4 @@ def logout():
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(host=SERVER_HOST, port=SERVER_PORT, debug=SERVER_DEBUG)
