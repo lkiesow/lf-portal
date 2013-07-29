@@ -52,7 +52,7 @@ SERVER_PORT  = 5000
 ###
 
 from functools import wraps
-from flask import Flask, request, redirect, url_for, render_template, _app_ctx_stack
+from flask import Flask, request, redirect, url_for, render_template
 import urllib
 import urllib2
 from xml.dom.minidom import parseString
@@ -71,16 +71,13 @@ def get_mc():
 	'''Returns a Memcached client. If there is none for the current application
 	context it will create a new.
 	'''
-	top = _app_ctx_stack.top
-	if not hasattr(top, 'memcached_cli'):
-		try:
-			top.memcached_cli = pylibmc.Client(
-					[app.config['MEMCACHED_HOST']], binary = True,
-					behaviors = {'tcp_nodelay': True, 'ketama': True})
-		except NameError:
-			top.memcached_cli = memcache.Client(
-					[app.config['MEMCACHED_HOST']], debug=0)
-	return top.memcached_cli
+	try:
+		return pylibmc.Client(
+				[app.config['MEMCACHED_HOST']], binary = True,
+				behaviors = {'tcp_nodelay': True, 'ketama': True})
+	except NameError:
+		return memcache.Client(
+				[app.config['MEMCACHED_HOST']], debug=0)
 
 
 def cached(time=app.config['CACHE_TIME_SEC']):
