@@ -125,7 +125,7 @@ def request_data(what, limit, offset, id=None, sid=None, q=None):
 	
 	cookie = request.cookies.get('JSESSIONID')
 	if cookie:
-		req.add_header('cookie', 'session="%s"; Path=/; HttpOnly' % cookie)
+		req.add_header('cookie', 'JSESSIONID="%s"; Path=/; HttpOnly' % cookie)
 
 	req.add_header('Accept', 'application/xml')
 	u = urllib2.urlopen(req)
