@@ -36,6 +36,12 @@ ENGAGE_URL_DETECTION = 'track-url'
 # a track URL, if split by '/':
 TRACK_ID_PART = 5
 
+# Part which will be added to all detectet server URLs.
+# For example if you serve your files using lighthttpd from port 80 and your
+# Engage Service will run on port 8080 you might want to add ':8080' as the
+# port will be missing from the autodetection.
+#URL_ADD_PART = ':8080'
+
 
 USE_MEMCACHD     = True
 MEMCACHED_HOST   = 'localhost:11211'
@@ -163,8 +169,11 @@ def prepare_episode(data):
 		img = None
 
 		player = None
+		# ;jsessionid=1a7yu5dodj4ip1xrzbqpeuwwqp
+		session = request.cookies.get('JSESSIONID')
+		session = (';jsessionid=%s' % session) if session else ''
 		if app.config['ENGAGE_URL_DETECTION'] == 'simple':
-			player = '%sui/watch.html?id=%s' % (app.config['ENGAGE_SERVICE'], id)
+			player = '%sui/watch.html%s?id=%s' % (app.config['ENGAGE_SERVICE'], session, id)
 		elif app.config['ENGAGE_URL_DETECTION'] == 'track-url':
 			for track in media.getElementsByTagNameNS('*', 'track'):
 				for url in track.getElementsByTagNameNS('*', 'url'):
@@ -172,9 +181,12 @@ def prepare_episode(data):
 					if not url.startswith('http'):
 						continue
 					url = url.split('/')
-					player = '%s/engage/ui/watch.html?id=%s' % (
-							'/'.join(url[:3]), 
+					player = '%s%s/engage/ui/watch.html%s?id=%s' % (
+							'/'.join(url[:3]),
+							app.config.get('URL_ADD_PART') or '',
+							session,
 							url[app.config['TRACK_ID_PART']] )
+					break
 		elif app.config['ENGAGE_URL_DETECTION'] == 'included':
 			print 'TODO: Implement this'
 
