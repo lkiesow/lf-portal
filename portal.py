@@ -320,6 +320,7 @@ def login():
 					urllib.urlencode(data))
 			if '/login.html' in u.headers.get('location'):
 				return render_template('login.html',
+						login=app.config['SECURITY_SERVICE'],
 						error='Could not log in. Incorrect credentials?')
 			cookie = u.headers.get('Set-Cookie')
 			u.close()
@@ -331,13 +332,16 @@ def login():
 		except urllib2.HTTPError as e:
 			if e.code == 404:
 				return render_template('login.html',
+						login=app.config['SECURITY_SERVICE'],
 						error='Login service returned error. Please report this.')
 			if e.code == 401:
 				return render_template('login.html',
+						login=app.config['SECURITY_SERVICE'],
 						error='Could not log in. Incorrect credentials?')
 			raise e
 
-	return render_template('login.html')
+	return render_template('login.html',
+			login=app.config['SECURITY_SERVICE'])
 
 
 @app.route('/logout')

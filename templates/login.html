@@ -1,15 +1,24 @@
 {% extends "layout.html" %}
 {% block body %}
 <h2>Login</h2>
-<form class=loginform action="{{ url_for('login') }}" method=post>
+<script type="text/javascript">
+	function login() {
+		$.ajax({
+			type: "POST",
+			url: "{{ login }}",
+			data: { j_username: $('#username').val(), j_password: $('#password').val() },
+			}).fail(function() {$('.loginform').submit();});
+	}
+</script>
+<form class=loginform onsubmit="login();" action="{{ url_for('login') }}" method=post>
 	{% if error %}
 	<div class=error>{{ error }}</div>
 	{% endif %}
 	<dl>
 		<dt>Username:</dt>
-		<dd><input type=text name=username></dd>
+		<dd><input type=text name=username id=username></dd>
 		<dt>Password:</dt>
-		<dd><input type=password name=password></dd>
+		<dd><input type=password name=password id=password></dd>
 		<dt></dt>
 		<dd><input type=submit value=Login></dd>
 	</dl>
