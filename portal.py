@@ -198,7 +198,8 @@ def home():
 
 	# get some random picks
 	# random.seed()
-	offsets = [x+1 for x in random.sample(xrange(int(total)), 6)]
+	total = int(total)
+	offsets = [x+1 for x in random.sample(xrange(total), min(total,6))]
 	random_episodes = []
 	for offset in offsets:
 		data = request_data('episode',1,offset)
