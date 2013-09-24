@@ -15,15 +15,20 @@ import urllib
 import urllib2
 from xml.dom.minidom import parseString
 import random
-try:
-	import pylibmc
-except ImportError:
-	import memcache
 
 # Create application :)
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
+# Try to import a memcached library
+try:
+	import pylibmc
+except ImportError:
+	try:
+		import memcache
+	except ImportError:
+		if app.config['USE_MEMCACHD']:
+			raise ImportError("Neither a module 'pylibmc' nor 'memcache'")
 
 def get_mc():
 	'''Returns a Memcached client. If there is none for the current application
@@ -192,14 +197,16 @@ def home():
 	But the random picks will probably be different the next time a single user
 	visits the page.
 	'''
-	data = request_data('episode',6,0)
+	limit = app.config.get('NEW_EPISODES_ON_HOME') or 6
+	data = request_data('episode',limit,0)
 	total = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
 	new_episodes = prepare_episode(data)
 
 	# get some random picks
 	# random.seed()
 	total = int(total)
-	offsets = [x+1 for x in random.sample(xrange(total), min(total,6))]
+	limit = app.config.get('RANDOM_EPISODES_ON_HOME') or 6
+	offsets = random.sample(xrange(total), min(total,limit))
 	random_episodes = []
 	for offset in offsets:
 		data = request_data('episode',1,offset)
@@ -279,19 +286,22 @@ def search(page=1):
 	page -= 1
 	q     = request.args.get('q')
 
+	# Get pages per site for search
+	limit = app.config.get('SEARCH_RESULTS_PER_PAGE') or 9
+
 	series = []
 	if not page:
 		data     = request_data('series', 9999, 0, q=q)
 		series   = prepare_series(data)
 
-	data     = request_data('episode', 9, 0, q=q)
+	data     = request_data('episode', limit, page * limit, q=q)
 	total    = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
 	episodes = prepare_episode(data)
 
-	pages = [ p+1 for p in xrange(int(total) / 9) ]
+	pages = [ p+1 for p in xrange((int(total) / limit)+1) ]
 
 	return render_template('search.html', series=series, episodes=episodes,
-			pages=pages, activepage=page)
+			pages=pages, activepage=page+1)
 
 
 class NoRedirection(urllib2.HTTPErrorProcessor):

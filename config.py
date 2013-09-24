@@ -15,6 +15,13 @@ SECURITY_SERVICE = 'http://engage.opencast.org/j_spring_security_check'
 # The amount of series per page to display on /lectures
 SERIES_PER_PAGE  = 15
 
+# The amount of videos displayed on the home page
+NEW_EPISODES_ON_HOME    = 6
+RANDOM_EPISODES_ON_HOME = 6
+
+# The amount of recordings per search page
+SEARCH_RESULTS_PER_PAGE = 9
+
 # One of: simple, track-url, included
 #   simple    Try to construct the player URL by ENGAGE_SERVICE variable and
 #             mediapackage id. Fast but reliable only in some cases. Not if

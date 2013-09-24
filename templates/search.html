@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block body %}
-{% if activepage == 0 %}
+{% if activepage == 1 %}
 <h2>Series</h2>
 <div class=series_compact>
 	{% for s in series %}
@@ -36,8 +36,6 @@
 	<li>
 	<a href="{{ url_for('search', page=p) }}?q={{ request.args.get('q') }}">{{ p }}</a>
 	</li>
-	{% else %}
-	<li>1</li>
 	{% endfor %}
 </ul>
 {% endblock %}
