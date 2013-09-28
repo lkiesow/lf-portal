@@ -12,8 +12,11 @@
 SEARCH_SERVICE   = 'http://engage.opencast.org/search/'
 SECURITY_SERVICE = 'http://engage.opencast.org/j_spring_security_check'
 
-# The amount of series per page to display on /lectures
+# The amount of series per page to display on /serieslist
 SERIES_PER_PAGE  = 15
+
+# The amount of series per page to display on /recordinglist
+RECORDINGS_PER_PAGE  = 9
 
 # The amount of videos displayed on the home page
 NEW_EPISODES_ON_HOME    = 6

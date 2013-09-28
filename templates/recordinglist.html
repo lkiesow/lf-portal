@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Recordings</h2>
+<ul class=episodes>
+	{% for ep in episodes %}
+	<li><a href="{{ url_for('episode', id=ep.id) }}">
+		<span><img src="{{ ep.img }}" /></span>
+		<div>
+			<h3>{{ ep.title }}</h3>
+			{{ ep.seriestitle|safe }}
+		<div>
+	</a></li>
+	{% else %}
+	<li><em>No videos</em></li>
+	{% endfor %}
+</ul>
+
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	{% if activepage == p %}
+	<a class=active href="{{ url_for('recordinglist', page=p) }}">{{ p }}</a>
+	{%else%}
+	<a href="{{ url_for('recordinglist', page=p) }}">{{ p }}</a>
+	{%endif%}
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

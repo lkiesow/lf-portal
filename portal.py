@@ -151,7 +151,6 @@ def prepare_episode(data):
 			print 'TODO: Implement this'
 
 		for attachment in media.getElementsByTagNameNS('*', 'attachment'):
-			print attachment.getAttribute('type')
 			if attachment.getAttribute('type').endswith('/player+preview'):
 				img = attachment.getElementsByTagNameNS('*', 'url')[0].childNodes[0].data
 
@@ -217,11 +216,11 @@ def home():
 			random_episodes=random_episodes)
 
 
-@app.route('/lectures')
-@app.route('/lectures/<int:page>')
+@app.route('/serieslist')
+@app.route('/serieslist/<int:page>')
 @cached()
-def lectures(page=1):
-	'''Renders the lectures page which displays a list of all available series.
+def serieslist(page=1):
+	'''Renders the page which displays a list of all available series.
 
 	This method is awfully slow and puts some stress on the server if used with
 	Matterhorn 1.3.1 due to some bugs in the Matterhorn Search service.
@@ -235,8 +234,27 @@ def lectures(page=1):
 	total = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
 	series = prepare_series(data)
 
-	pages = [ p+1 for p in xrange(int(total) / app.config['SERIES_PER_PAGE']) ]
-	return render_template('lectures.html', series=series, pages=pages, activepage=page)
+	pages = [ p+1 for p in xrange((int(total) / app.config['SERIES_PER_PAGE'])+1) ]
+	print pages
+	return render_template('serieslist.html', series=series, pages=pages, activepage=page+1)
+
+
+@app.route('/recordinglist')
+@app.route('/recordinglist/<int:page>')
+@cached()
+def recordinglist(page=1):
+	'''Renders the page which displays a list of all available recordings.
+	'''
+	page -= 1
+
+	data = request_data('episode', app.config['RECORDINGS_PER_PAGE'], 
+			app.config['SERIES_PER_PAGE'] * page)
+	total = data.getElementsByTagNameNS('*', 'search-results')[0].getAttribute('total')
+	episodes = prepare_episode(data)
+
+	pages = [ p+1 for p in xrange((int(total) / app.config['RECORDINGS_PER_PAGE'])+1) ]
+	print pages
+	return render_template('recordinglist.html', episodes=episodes, pages=pages, activepage=page+1)
 
 
 @app.route('/episode/<id>')

@@ -80,6 +80,10 @@ a {
 	padding-top: 10px;
 }
 
+.pager li a.active {
+	background-color: #bbb;
+}
+
 .pager li a:hover {
 	background-color: #bbb;
 }

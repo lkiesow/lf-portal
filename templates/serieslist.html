@@ -25,10 +25,12 @@
 <ul class=pager>
 	{% for p in pages %}
 	<li>
-	<a href="{{ url_for('lectures', page=p) }}">{{ p }}</a>
+	{% if activepage == p %}
+	<a class=active href="{{ url_for('serieslist', page=p) }}">{{ p }}</a>
+	{%else%}
+	<a href="{{ url_for('serieslist', page=p) }}">{{ p }}</a>
+	{%endif%}
 	</li>
-	{% else %}
-	<li>1</li>
 	{% endfor %}
 </ul>
 {% endblock %}
