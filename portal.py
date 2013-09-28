@@ -16,6 +16,11 @@ import urllib2
 from xml.dom.minidom import parseString
 import random
 
+# Set default encoding to UTF-8
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 # Create application :)
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
