@@ -4,7 +4,7 @@
 	<nav>
 		<span>Lectures</span>
 		<span>→</span>
-		<a href="{{ url_for('series', id=episode.series) }}">{{ episode.seriestitle|safe }}</a>
+		<a href="{{ url_for('series', id=episode.series) }}">{{ episode.seriestitle }}</a>
 	</nav>
 	<h2>{{ episode.title }}</h2>
 	<div class=videocontainer>

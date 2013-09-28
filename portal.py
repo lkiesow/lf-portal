@@ -155,10 +155,16 @@ def prepare_episode(data):
 		elif app.config['ENGAGE_URL_DETECTION'] == 'included':
 			print 'TODO: Implement this'
 
+		img = {}
 		for attachment in media.getElementsByTagNameNS('*', 'attachment'):
-			if attachment.getAttribute('type').endswith('/player+preview'):
-				img = attachment.getElementsByTagNameNS('*', 'url')[0].childNodes[0].data
-
+			try:
+				mimetype = attachment.getElementsByTagNameNS('*', 'mimetype')[0].childNodes[0].data
+				if mimetype.startswith('image'):
+					flavor = attachment.getAttribute('type')
+					url    = attachment.getElementsByTagNameNS('*', 'url')[0].childNodes[0].data
+					img[flavor] = ( img.get(flavor) or [] ) + [url]
+			except IndexError:
+				pass
 
 		episodes.append( {'id':id, 'title':title, 'series':series,
 			'seriestitle':seriestitle, 'img':img, 'player':player} )

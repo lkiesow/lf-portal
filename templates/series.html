@@ -14,10 +14,10 @@
 <ul class=episodes>
 	{% for ep in episodes %}
 	<li><a href="{{ url_for('episode', id=ep.id) }}">
-		<span><img src="{{ ep.img }}" /></span>
+		<span><img src="{{ (ep.img.get('presentation/player+preview') or [''])[0] }}" /></span>
 		<div>
 			<h3>{{ ep.title }}</h3>
-			{{ ep.seriestitle|safe }}
+			{{ ep.seriestitle }}
 		<div>
 	</a></li>
 	{% else %}
