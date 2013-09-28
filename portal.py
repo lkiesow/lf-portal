@@ -151,6 +151,7 @@ def prepare_episode(data):
 			print 'TODO: Implement this'
 
 		for attachment in media.getElementsByTagNameNS('*', 'attachment'):
+			print attachment.getAttribute('type')
 			if attachment.getAttribute('type').endswith('/player+preview'):
 				img = attachment.getElementsByTagNameNS('*', 'url')[0].childNodes[0].data
 
@@ -328,9 +329,10 @@ def login():
 			opener = urllib2.build_opener(NoRedirection)
 			u = opener.open(app.config['SECURITY_SERVICE'],
 					urllib.urlencode(data))
-			if '/login.html' in u.headers.get('location'):
-				return render_template('login.html',
-						error='Could not log in. Incorrect credentials?')
+			if u.headers.get('location'):
+				if '/login.html' in u.headers.get('location'):
+					return render_template('login.html',
+							error='Could not log in. Incorrect credentials?')
 			cookie = u.headers.get('Set-Cookie')
 			u.close()
 
