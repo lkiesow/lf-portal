@@ -3,7 +3,7 @@
 <h2>Lecture Series</h2>
 <ul class=series>
 	{% for s in series %}
-	<li>
+	<li style="background-color: #{{ s.color }};">
 		<a href="{{ url_for('series', id=s.id) }}">
 			<h3>{{ s.title }}</h3>
 			{% for c in s.creator %}

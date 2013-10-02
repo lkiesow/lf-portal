@@ -39,6 +39,11 @@ a {
 	display: inline-block;
 	width: 290px;
 	vertical-align: top;
+	font-size: smaller;
+}
+
+.episodes li * {
+	color: white;
 }
 
 .episodes li span {
@@ -193,8 +198,11 @@ nav a:hover {
 	padding: 10px;
 	display: inline-block;
 	vertical-align: top;
-	background-color: #eee;
 	width: 300px;
+}
+
+.series_compact * {
+	color: #fff;
 }
 
 .series_compact div {
@@ -211,6 +219,10 @@ nav a:hover {
 	padding: 25px;
 }
 
+.series li * {
+	color: white;
+}
+
 .series li {
 	margin: 15px;
 	padding: 10px;
@@ -222,7 +234,6 @@ nav a:hover {
 	display: inline-block;
 	margin: 5px;
 	padding: 5px 15px;
-	background-color: #fff;
 }
 
 .series li p {
@@ -256,4 +267,25 @@ footer a {
 
 footer a:hover {
 	color: #000;
+}
+
+.searchresults tr:hover {
+	background-color: #dddddd;
+}
+
+.searchresults td {
+	padding: 10px;
+	font-size: smaller;
+}
+
+.searchresults td span {
+	display:  inline-block;
+	width:    64px;
+	height:   36px;
+	overflow: hidden;
+	padding:  0px;
+}
+
+.searchresults td span img {
+	width:    64px;
 }

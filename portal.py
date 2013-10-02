@@ -166,8 +166,17 @@ def prepare_episode(data):
 			except IndexError:
 				pass
 
+		creator     = [ c.childNodes[0].data 
+				for c in media.getElementsByTagNameNS('*', 'creator') ]
+
+		contributor = [ c.childNodes[0].data 
+				for c in media.getElementsByTagNameNS('*', 'contributor') ]
+
+
 		episodes.append( {'id':id, 'title':title, 'series':series,
-			'seriestitle':seriestitle, 'img':img, 'player':player} )
+			'seriescolor':idtocolor(series),
+			'seriestitle':seriestitle, 'img':img, 'player':player,
+			'creator':creator, 'contributor':contributor} )
 	return episodes
 
 
@@ -192,8 +201,25 @@ def prepare_series(data):
 				for c in result.getElementsByTagNameNS('*', 'dcContributor') ]
 
 		series.append( {'id':id, 'title':title, 'creator':creator,
+			'color':idtocolor(id),
 			'contributor':contributor} )
 	return series
+
+
+def idtocolor(id):
+	rgb_max = [100,100,100]
+	rgb_offset = [0] * 3
+	rgb = [0, 0, 0]
+	i = 0
+	for c in id:
+		rgb[i] += ord(c)
+		i = (i+1) % 3;
+
+	rgb[0] = '%0.2x' % ((rgb[0] % rgb_max[0]) + rgb_offset[0])
+	rgb[1] = '%0.2x' % ((rgb[1] % rgb_max[1]) + rgb_offset[1])
+	rgb[2] = '%0.2x' % ((rgb[2] % rgb_max[2]) + rgb_offset[2])
+
+	return ''.join(rgb)
 
 
 @app.route('/')
@@ -246,7 +272,6 @@ def serieslist(page=1):
 	series = prepare_series(data)
 
 	pages = [ p+1 for p in xrange((int(total) / app.config['SERIES_PER_PAGE'])+1) ]
-	print pages
 	return render_template('serieslist.html', series=series, pages=pages, activepage=page+1)
 
 
@@ -264,7 +289,6 @@ def recordinglist(page=1):
 	episodes = prepare_episode(data)
 
 	pages = [ p+1 for p in xrange((int(total) / app.config['RECORDINGS_PER_PAGE'])+1) ]
-	print pages
 	return render_template('recordinglist.html', episodes=episodes, pages=pages, activepage=page+1)
 
 

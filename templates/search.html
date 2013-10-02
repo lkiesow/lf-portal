@@ -4,7 +4,7 @@
 <h2>Series</h2>
 <div class=series_compact>
 	{% for s in series %}
-	<a href="{{ url_for('series', id=s.id) }}">
+	<a href="{{ url_for('series', id=s.id) }}" style="background-color: #{{ s.color }};">
 		<h3>{{ s.title }}</h3>
 		{% for c in s.creator %}
 		<span>{{ c }}</span>
@@ -19,10 +19,11 @@
 <h2>Recordings</h2>
 <ul class=episodes>
 	{% for ep in episodes %}
-	<li><a href="{{ url_for('episode', id=ep.id) }}">
-		<span><img src="{{ (ep.img.get('presentation/player+preview') or [''])[0] }}" /></span>
+	<li style="background-color: #{{ ep.seriescolor }};"><a href="{{ url_for('episode', id=ep.id) }}">
+		<span><img src="{{ (ep.img.get('presentation/player+preview') or ep.img.get('presenter/player+preview') or [''])[0] }}" /></span>
 		<div>
 			<h3>{{ ep.title }}</h3>
+			<p>{{ ', '.join(ep.creator) }}</p>
 			{{ ep.seriestitle }}
 		<div>
 	</a></li>
