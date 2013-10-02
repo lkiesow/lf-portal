@@ -25,40 +25,28 @@ RANDOM_EPISODES_ON_HOME = 6
 # The amount of recordings per search page
 SEARCH_RESULTS_PER_PAGE = 9
 
-# One of: simple, track-url, included
-#   simple    Try to construct the player URL by ENGAGE_SERVICE variable and
-#             mediapackage id. Fast but reliable only in some cases. Not if
-#             there are more than one engage server and not if the IDs might
-#             have changed.
-#   track-url Try to construct the engage player URL from a random track URL.
-#             This will work in most cases. Even if there are more than one
-#             engage server. Not, however, if the tracks are served from a
-#             dedicated server which is not the engage server.
-#   included  Uses the links included in the mediapackage. This is the most
-#             reliable one. But this method only works if the links to the
-#             player are included into the mediapackage.
-ENGAGE_URL_DETECTION = 'track-url'
+# Plug-ins to use for the player embed HTML generation.
+# The default plu-ins are:
+#   simpleengage   Try to include the engage player URL by using the
+#             ENGAGE_SERVICE variable and mediapackage id. Fast but reliable
+#             only in some cases. Not if there are more than one engage server
+#             and not if the IDs might have changed.
+#   simpleembed   Try to include the embed player URL by using the
+#             ENGAGE_SERVICE variable and mediapackage id. Fast but reliable
+#             only in some cases. Not if there are more than one engage server
+#             and not if the IDs might have changed.
+# Multiple plug-ins can be defined. In that case, the next plug-in is used if
+# one plug-in fails to construct the code.
+PLAYER_PLUGINS = ['simpleembed']
 
-# Set this if ENGAGE_URL_DETECTION is set to simple:
-#ENGAGE_SERVICE   = 'http://engage.opencast.org/engage/'
+# Set this if ENGAGE_PLUGIN is set to simpleembed or simpleengage:
+ENGAGE_SERVICE   = 'http://engage.opencast.org/engage/'
 
-# Set this if ENGAGE_URL_DETECTION is set to track-url:
-# The following value specifies the position of the mediapackage identifier in
-# a track URL, if split by '/':
-TRACK_ID_PART = 5
-
-# Part which will be added to all detectet server URLs.
-# For example if you serve your files using lighthttpd from port 80 and your
-# Engage Service will run on port 8080 you might want to add ':8080' as the
-# port will be missing from the autodetection.
-#URL_ADD_PART = ':8080'
-
-
-USE_MEMCACHD     = True
+USE_MEMCACHD     = False
 MEMCACHED_HOST   = 'localhost:11211'
 CACHE_TIME_SEC   = 600
 
 # Configuration for built-in server only:
 SERVER_DEBUG = True
 SERVER_HOST  = '0.0.0.0' # Set to localhost for local access only
-SERVER_PORT  = 5000
+SERVER_PORT  = 8000

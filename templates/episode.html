@@ -8,7 +8,7 @@
 	</nav>
 	<h2>{{ episode.title }}</h2>
 	<div class=videocontainer>
-		<iframe src="{{ episode.player }}"></iframe>
+		{{ episode.player|safe }}
 	</div>
 	
 </div>

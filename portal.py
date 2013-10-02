@@ -35,6 +35,14 @@ except ImportError:
 		if app.config['USE_MEMCACHD']:
 			raise ImportError("Neither a module 'pylibmc' nor 'memcache'")
 
+
+def load_player_plugin(names):
+	for n in names:
+		mod = __import__('plugin.player.%s' % n)
+		mod = getattr(mod.player, n)
+		player.append( mod )
+
+
 def get_mc():
 	'''Returns a Memcached client. If there is none for the current application
 	context it will create a new.
@@ -133,28 +141,18 @@ def prepare_episode(data):
 		seriestitle = get_xml_val(media, 'seriestitle')
 		img = None
 
-		player = None
 		# ;jsessionid=1a7yu5dodj4ip1xrzbqpeuwwqp
 		session = request.cookies.get('JSESSIONID')
 		session = (';jsessionid=%s' % session) if session else ''
-		if app.config['ENGAGE_URL_DETECTION'] == 'simple':
-			player = '%sui/watch.html%s?id=%s' % (app.config['ENGAGE_SERVICE'], session, id)
-		elif app.config['ENGAGE_URL_DETECTION'] == 'track-url':
-			for track in media.getElementsByTagNameNS('*', 'track'):
-				for url in track.getElementsByTagNameNS('*', 'url'):
-					url = url.childNodes[0].data
-					if not url.startswith('http'):
-						continue
-					url = url.split('/')
-					player = '%s%s/engage/ui/watch.html%s?id=%s' % (
-							'/'.join(url[:3]),
-							app.config.get('URL_ADD_PART') or '',
-							session,
-							url[app.config['TRACK_ID_PART']] )
-					break
-		elif app.config['ENGAGE_URL_DETECTION'] == 'included':
-			print 'TODO: Implement this'
 
+		player_html = ''
+		player_data = {}
+		
+		for p in player:
+			player_html, player_data = p.player( media, app.config, request )
+			if player_html:
+				break
+			
 		img = {}
 		for attachment in media.getElementsByTagNameNS('*', 'attachment'):
 			try:
@@ -175,7 +173,7 @@ def prepare_episode(data):
 
 		episodes.append( {'id':id, 'title':title, 'series':series,
 			'seriescolor':idtocolor(series),
-			'seriestitle':seriestitle, 'img':img, 'player':player,
+			'seriestitle':seriestitle, 'img':img, 'player':player_html,
 			'creator':creator, 'contributor':contributor} )
 	return episodes
 
@@ -416,6 +414,11 @@ def logout():
 
 
 if __name__ == '__main__':
+
+	# import player plugin
+	player = []
+	load_player_plugin( app.config['PLAYER_PLUGINS'] )
+
 	app.run(
 			host=(app.config.get('SERVER_HOST') or 'localhost'),
 			port=(app.config.get('SERVER_PORT') or 5000),
