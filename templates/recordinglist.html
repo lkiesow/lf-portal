@@ -1,6 +1,10 @@
+{% if not request.args.get('ajax') %}
 {% extends "layout.html" %}
+{% endif %}
 {% block body %}
+{% if not request.args.get('ajax') %}
 <h2>Recordings</h2>
+{% endif %}
 <ul class=episodes>
 	{% for ep in episodes %}
 	<li style="background-color: #{{ ep.seriescolor }};"><a href="{{ url_for('episode', id=ep.id) }}">
@@ -16,6 +20,7 @@
 	{% endfor %}
 </ul>
 
+{% if not request.args.get('ajax') %}
 <ul class=pager>
 	{% for p in pages %}
 	<li>
@@ -27,4 +32,5 @@
 	</li>
 	{% endfor %}
 </ul>
+{% endif %}
 {% endblock %}
