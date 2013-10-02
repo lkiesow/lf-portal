@@ -135,7 +135,8 @@ def prepare_episode(data):
 	'''
 	episodes = []
 	for media in data.getElementsByTagNameNS('*', 'mediapackage'):
-		id = media.getAttribute('id')
+		id   = media.getAttribute('id')
+		date = media.getAttribute('start')
 		title       = get_xml_val(media, 'title')
 		series      = get_xml_val(media, 'series')
 		seriestitle = get_xml_val(media, 'seriestitle')
@@ -174,7 +175,7 @@ def prepare_episode(data):
 		episodes.append( {'id':id, 'title':title, 'series':series,
 			'seriescolor':idtocolor(series),
 			'seriestitle':seriestitle, 'img':img, 'player':player_html,
-			'creator':creator, 'contributor':contributor} )
+			'creator':creator, 'contributor':contributor, 'date':date} )
 	return episodes
 
 
@@ -191,6 +192,7 @@ def prepare_series(data):
 		id = result.getAttribute('id')
 		title       = get_xml_val(result, 'dcTitle')
 		description = get_xml_val(result, 'dcDescription')
+		date        = get_xml_val(result, 'modified')
 
 		creator     = [ c.childNodes[0].data 
 				for c in result.getElementsByTagNameNS('*', 'dcCreator') ]
@@ -199,7 +201,7 @@ def prepare_series(data):
 				for c in result.getElementsByTagNameNS('*', 'dcContributor') ]
 
 		series.append( {'id':id, 'title':title, 'creator':creator,
-			'color':idtocolor(id),
+			'color':idtocolor(id), 'date':date,
 			'contributor':contributor} )
 	return series
 
