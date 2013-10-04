@@ -30,6 +30,7 @@ app.config.from_pyfile('config.py')
 app.jinja_loader = FileSystemLoader('%s/templates/%s/' % (
 	os.path.dirname(os.path.abspath(__file__)),
 	app.config['TEMPLATE']))
+app.static_folder = 'static/%s/' % app.config['TEMPLATE']
 
 # Try to import a memcached library
 try:
