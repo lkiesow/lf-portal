@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block body %}
+<table class=searchresults width="100%">
+	<tr><td colspan=6>
+		<h2>New Recordings</h2>
+	</td></tr>
+</table>
+
+{% for ep in new_episodes[:1] %}
+<table class=episodes>
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}">
+			<a href="{{ url_for('episode', id=ep.id) }}">
+				<span><img src="{{ (ep.img.get('presentation/player+preview') or [''])[0] }}" /></span>
+			</a>
+		</td>
+		<td>
+			<a href="{{ url_for('episode', id=ep.id) }}"><h2>{{ ep['title'] }}</h2></a>
+			<p>{{ ep['date'].strftime('%a, %d %b %Y %H:%M:%S %Z') }}</p>
+			<p><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></p>
+			<p>{{ ', '.join(ep['contributor'] or ['']) }}</p>
+			<p>{{ ', '.join(ep['creator'] or ['']) }}</p>
+			<p>{{ ep['description'] }}</p>
+		</td>
+	</tr>
+	{% else %}
+	<li>No videos here so far.</li>
+</table>
+{% endfor %}
+
+<table class=searchresults>
+	{% for ep in new_episodes[1:] %}
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td>{{ (ep['contributor'] or [''])[0] }}</td>
+		<td>{{ (ep['creator'] or [''])[0] }}</td>
+		<td><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></td>
+		<td>{{ ep['date'].strftime('%X %x %Z') }}</td>
+		<td><a href="{{ url_for('episode', id=ep.id) }}"> {{ ep.title }}</a></td>
+	</tr>
+	{% endfor %}
+
+	<tr><td colspan=6>
+			<h2>Random Picks</h2>
+	</td></tr>
+
+	{% for ep in random_episodes %}
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td>{{ (ep['contributor'] or [''])[0] }}</td>
+		<td>{{ (ep['creator'] or [''])[0] }}</td>
+		<td><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></td>
+		<td>{{ ep['date'].strftime('%X %x %Z') }}</td>
+		<td><a href="{{ url_for('episode', id=ep.id) }}"> {{ ep.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No videos yet.</td></tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

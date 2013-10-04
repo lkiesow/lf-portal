@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<h2>Lecture Series</h2>
+
+<table class=searchresults>
+	{% for s in series %}
+	<tr>
+		<td style="border-left: 8px solid #{{ s.color}}">{{ (s['contributor'] or [''])[0] }}</td>
+		<td>{{ ', '.join(s['creator'] or ['']) }}</td>
+		<td>{{ s['date'].strftime('%a, %d %b %Y %H:%M:%S %Z') }}</td>
+		<td><a href="{{ url_for('series', id=s.id) }}"> {{ s.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No videos matching this query</td></tr>
+	{% endfor %}
+</table>
+
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	{% if activepage == p %}
+	<a class=active href="{{ url_for('serieslist', page=p) }}">{{ p }}</a>
+	{%else%}
+	<a href="{{ url_for('serieslist', page=p) }}">{{ p }}</a>
+	{%endif%}
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

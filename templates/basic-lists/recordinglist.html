@@ -1,0 +1,37 @@
+{% if not request.args.get('ajax') %}
+{% extends "layout.html" %}
+{% endif %}
+{% block body %}
+{% if not request.args.get('ajax') %}
+<h2>Recordings</h2>
+{% endif %}
+
+<table class=searchresults>
+	{% for ep in episodes %}
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td>{{ ', '.join(ep['contributor'] or ['']) }}</td>
+		<td>{{ ', '.join(ep['creator'] or ['']) }}</td>
+		<td><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></td>
+		<td>{{ ep['date'].strftime('%X %x %Z') }}</td>
+		<td><a href="{{ url_for('episode', id=ep.id) }}"> {{ ep.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No videos here yet.</td></tr>
+	{% endfor %}
+</table>
+
+{% if not request.args.get('ajax') %}
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	{% if activepage == p %}
+	<a class=active href="{{ url_for('recordinglist', page=p) }}">{{ p }}</a>
+	{%else%}
+	<a href="{{ url_for('recordinglist', page=p) }}">{{ p }}</a>
+	{%endif%}
+	</li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

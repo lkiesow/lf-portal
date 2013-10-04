@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<body>
+
+<title>lf-portal</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<div class=page>
+	<a href="{{ url_for('home') }}"><h1>lf-portal</h1></a>
+	<nav>
+		<a href="{{ url_for('home') }}">Home</a>
+		<a href="{{ url_for('serieslist', page=1) }}">Series</a>
+		<a href="{{ url_for('recordinglist', page=1) }}">Recordings</a>
+
+	</nav><nav>
+
+	<form method="GET" action="{{ url_for('search', page=1) }}">
+			<input type="search" placeholder="search…" autofocus="autofocus" name="q"
+			/><input type="submit" value="⌕" /> 
+		</form>
+
+		{% if request.cookies.get('JSESSIONID') %}
+		<a href="{{ url_for('logout') }}">Log out</a>
+		{% else %}
+		<a href="{{ url_for('login') }}">Log in</a>
+		{% endif %}
+	</nav>
+	{% for message in get_flashed_messages() %}
+	<div class=flash>{{ message }}</div>
+	{% endfor %}
+	{% block body %}{% endblock %}
+
+	<footer>
+	Powered by <a href="https://github.com/lkiesow/lf-portal">lf-portal</a>
+	</footer>
+</div>
+
+</body>
+</html>

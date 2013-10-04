@@ -1,0 +1,300 @@
+body {
+	font-family: sans-serif;
+	background: #eee;
+}
+
+h1, h2, h3 {
+	color: #377BA8;
+}
+
+h1, h2 {
+	margin: 15px;
+}
+
+h3 {
+	margin: 0;
+	font-size: 1.05em;
+}
+
+a {
+	text-decoration: none;
+}
+
+.page {
+	margin: 2em auto;
+	width: 1100px;
+	border: 5px solid #ccc;
+	padding: 0em;
+	background: white;
+}
+
+.episodes {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.episodes p {
+	margin: 5px 35px;
+	font-size: smaller;
+}
+
+.episodes {
+	padding-left: 10px;
+}
+
+.episodes td span {
+	display: inline-block;
+	width: 288px;
+	height: 162px;
+	overflow: hidden;
+	padding: 0px;
+}
+
+.episodes td {
+	padding: 10px;
+}
+
+.episodes td img {
+	width: 288px;
+	margin: 0px;
+	padding: 0px;
+}
+
+.pager {
+	list-style: none;
+	padding: 0;
+	text-align: center;
+}
+
+.pager li {
+	margin: 2x 2px;
+	padding: 0px;
+	display: inline-block;
+}
+
+.pager li a {
+	display: inline-block;
+	background-color: #ddd;
+	width: 35px;
+	height: 25px;
+	text-align: center;
+	padding-top: 10px;
+}
+
+.pager li a.active {
+	background-color: #bbb;
+}
+
+.pager li a:hover {
+	background-color: #bbb;
+}
+
+.episodeview {
+	padding: 25px 75px;
+}
+
+.episodeview nav {
+	border: none;
+	display: block;
+	font-size: smaller;
+	background-color: white;
+	width: 100%;
+	margin: 0px;
+}
+
+.episodeview nav * {
+	display: inline-block;
+	padding: 10px;
+}
+
+.episodeview h2 {
+	padding: 0px 20px;
+	margin: 0px;
+	margin-bottom: 25px;
+}
+
+.episodeview iframe {
+	display: block;
+	width: 100%;
+	height: 600px;
+	margin-top: 0px;
+	border: none;
+	overflow: hidden;
+}
+
+.episodeview .videocontainer {
+	overflow: hidden;
+}
+
+.infoblock {
+	margin: 0px;
+	padding: 0px 0px 35px 35px;
+}
+
+.infoblock span {
+	display: inline-block;
+	padding: 10px;
+}
+
+.add-entry {
+	font-size: 0.9em;
+	border-bottom: 1px solid #ccc;
+}
+
+.add-entry dl {
+	font-weight: bold;
+}
+
+nav {
+	width: 50%;
+	display: inline-block;
+	padding: 0px;
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	margin-bottom: 1em;
+	background: #fafafa;
+	vertical-align: bottom;
+}
+
+nav a {
+	display: inline-block;
+	padding: 5px 15px;
+	margin: 0px;
+	border: none;
+	color: black;
+}
+
+nav form {
+	display: inline-block;
+	padding: 0px 15px;
+	margin: 0px;
+}
+
+nav form input {
+	margin: 2px 0px;
+}
+
+nav:nth-child(3) {
+	text-align: right;
+}
+
+nav a:hover {
+	background: #eee;
+}
+
+.series_compact {
+	list-style: none;
+	margin: 0;
+	padding: 15px;
+	text-align: justify;
+}
+
+.series_compact a {
+	margin: 15px;
+	padding: 10px;
+	display: inline-block;
+	vertical-align: top;
+	width: 300px;
+}
+
+.series_compact * {
+	color: #fff;
+}
+
+.series_compact div {
+	padding-left: 20px;
+}
+
+.series_compact a:hover {
+	background-color: #ddd;
+}
+
+.series {
+	list-style: none;
+	margin: 0;
+	padding: 25px;
+}
+
+.series li * {
+	color: white;
+}
+
+.series li {
+	margin: 15px;
+	padding: 10px;
+	vertical-align: top;
+	background-color: #eee;
+}
+
+.series li span {
+	display: inline-block;
+	margin: 5px;
+	padding: 5px 15px;
+}
+
+.series li p {
+	display: block;
+	margin: 5px;
+	padding: 5px 15px;
+	background-color: #fff;
+}
+
+.loginform {
+	width: 350px;
+	margin: 35px auto;
+}
+
+.loginform dt, .loginform dd {
+	display: inline-block;
+	min-width: 100px;
+}
+
+footer {
+	text-align: right;
+	padding: 15px;
+	background-color: #ccc;
+	color: #444;
+	font-size: smaller;
+}
+
+footer a {
+	color: #444;
+}
+
+footer a:hover {
+	color: #000;
+}
+
+.searchresults {
+	padding-left: 10px;
+}
+
+.searchresults tr:hover {
+	background-color: #dddddd;
+}
+
+.searchresults td:hover {
+	background-color: #cccccc;
+}
+
+.searchresults td a {
+	display: block;
+}
+
+.searchresults td {
+	padding: 10px;
+	font-size: smaller;
+}
+
+.searchresults td span {
+	display:  inline-block;
+	width:    64px;
+	height:   36px;
+	overflow: hidden;
+	padding:  0px;
+}
+
+.searchresults td span img {
+	width:    64px;
+}

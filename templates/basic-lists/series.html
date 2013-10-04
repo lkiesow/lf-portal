@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{{ series.title }}</h2>
+<div class=infoblock>
+	{% for c in series.creator %}
+	<span>{{ c }}</span>
+	{% endfor %}
+	{% for c in series.contributor %}
+	<span>{{ c }}</span>
+	{% endfor %}
+</div>
+
+<table class=searchresults>
+	{% for ep in episodes %}
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td>{{ (ep['contributor'] or [''])[0] }}</td>
+		<td>{{ (ep['creator'] or [''])[0] }}</td>
+		<td>{{ ep['date'] }}</td>
+		<td><a href="{{ url_for('episode', id=ep.id) }}"> {{ ep.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No videos in this series yet.</td></tr>
+	{% endfor %}
+</table>
+{% endblock %}

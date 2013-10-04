@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block body %}
+{% if activepage == 1 %}
+<h2>Series</h2>
+
+<table class=searchresults>
+	{% for s in series %}
+	<tr>
+		<td style="border-left: 8px solid #{{ s.color}}">{{ (s['contributor'] or [''])[0] }}</td>
+		<td>{{ ', '.join(s['creator'] or ['']) }}</td>
+		<td>{{ s['date'].strftime('%a, %d %b %Y %H:%M:%S %Z') }}</td>
+		<td><a href="{{ url_for('series', id=s.id) }}"> {{ s.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No series matching this query</td></tr>
+	{% endfor %}
+</table>
+{% endif %}
+
+<h2>Recordings</h2>
+<table class=searchresults>
+	{% for ep in episodes %}
+	<tr>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td>{{ (ep['contributor'] or [''])[0] }}</td>
+		<td>{{ (ep['creator'] or [''])[0] }}</td>
+		<td><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></td>
+		<td>{{ ep['date'].strftime('%X %x %Z') }}</td>
+		<td><a href="{{ url_for('episode', id=ep.id) }}"> {{ ep.title }}</a></td>
+	</tr>
+	{% else %}
+	<tr><td>No videos matching this query</td></tr>
+	{% endfor %}
+</table>
+
+<ul class=pager>
+	{% for p in pages %}
+	<li>
+	<a href="{{ url_for('search', page=p) }}?q={{ request.args.get('q') }}">{{ p }}</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}
