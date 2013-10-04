@@ -330,8 +330,10 @@ def series(id):
 	series   = prepare_series(data)
 	series   = series[0] if series else None
 
-	data     = request_data('episode', 999, 0, sid=series.get('id'))
-	episodes = prepare_episode(data)
+	episodes = []
+	if series:
+		data     = request_data('episode', 999, 0, sid=series.get('id'))
+		episodes = prepare_episode(data)
 
 	return render_template('series.html', series=series, episodes=episodes)
 
