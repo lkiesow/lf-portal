@@ -83,9 +83,9 @@ If you notice during the installation that packages are not in the repository
 of your distribution, use “**The easy way – 2**” which will tell you how to get
 these packages from pypi instead.
 
-1. Install Python and flask on your system:
+1. Install Python, Flask and dateutils on your system:
 
-		yum install python-flask
+		yum install python-flask python-dateutil
 
 2. Install memcached and a python module for it (optional but recommended):
 
@@ -151,7 +151,7 @@ install the python modules directly from the Python Package Index:
 
 3. Install python modules:
 
-		pip install Flask
+		pip install Flask dateutils
 		pip install python-memcached
 
 4. Install and start memcached (optional but recommended):
@@ -207,7 +207,7 @@ You can deploy lf-portal with Gunicorn like this;
 
 3. Install python modules:
 
-		pip install Flask
+		pip install Flask dateutils
 		pip install python-memcached
 		pip install gunicorn
 
