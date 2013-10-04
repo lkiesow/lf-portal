@@ -17,6 +17,7 @@ import urllib2
 from xml.dom.minidom import parseString
 import random
 import os
+import dateutil.parser
 
 # Set default encoding to UTF-8
 import sys
@@ -143,7 +144,7 @@ def prepare_episode(data):
 	episodes = []
 	for media in data.getElementsByTagNameNS('*', 'mediapackage'):
 		id   = media.getAttribute('id')
-		date = media.getAttribute('start')
+		date = dateutil.parser.parse(media.getAttribute('start'))
 		title       = get_xml_val(media, 'title')
 		series      = get_xml_val(media, 'series')
 		seriestitle = get_xml_val(media, 'seriestitle')
@@ -199,7 +200,11 @@ def prepare_series(data):
 		id = result.getAttribute('id')
 		title       = get_xml_val(result, 'dcTitle')
 		description = get_xml_val(result, 'dcDescription')
-		date        = get_xml_val(result, 'modified')
+		date        = ''
+		try:
+			date = dateutil.parser.parse(get_xml_val(result, 'modified'))
+		except:
+			pass
 
 		creator     = [ c.childNodes[0].data 
 				for c in result.getElementsByTagNameNS('*', 'dcCreator') ]
