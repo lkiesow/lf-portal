@@ -9,6 +9,10 @@
 	:license: GPL, see LICENSE for more details.
 '''
 
+# Specify the template to use for the portal.
+# Templates are located in the templates/<TEMPLATE> folder.
+TEMPLATE = 'basic-boxes'
+
 SEARCH_SERVICE   = 'http://engage.opencast.org/search/'
 SECURITY_SERVICE = 'http://engage.opencast.org/j_spring_security_check'
 

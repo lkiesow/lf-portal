@@ -11,10 +11,12 @@
 
 from functools import wraps
 from flask import Flask, request, redirect, url_for, render_template, _app_ctx_stack
+from jinja2 import FileSystemLoader
 import urllib
 import urllib2
 from xml.dom.minidom import parseString
 import random
+import os
 
 # Set default encoding to UTF-8
 import sys
@@ -24,6 +26,10 @@ sys.setdefaultencoding('utf8')
 # Create application :)
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
+
+app.jinja_loader = FileSystemLoader('%s/templates/%s/' % (
+	os.path.dirname(os.path.abspath(__file__)),
+	app.config['TEMPLATE']))
 
 # Try to import a memcached library
 try:
