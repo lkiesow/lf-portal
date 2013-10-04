@@ -21,7 +21,8 @@
 <table class=searchresults>
 	{% for ep in episodes %}
 	<tr>
-		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img src="{{ (ep.img.get('presentation/feed+preview') or [''])[0] }}" /></span></td>
+		<td style="border-left: 8px solid #{{ ep.seriescolor}}"><span><img
+				src="{{ (ep.img.get('presentation/feed+preview') or ep.img.get('presenter/feed+preview') or [''])[0] }}" /></span></td>
 		<td>{{ (ep['contributor'] or [''])[0] }}</td>
 		<td>{{ (ep['creator'] or [''])[0] }}</td>
 		<td><a href="{{ url_for('series', id=ep.series) }}">{{ ep.seriestitle }}</a></td>
