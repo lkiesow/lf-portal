@@ -51,6 +51,16 @@ def load_player_plugin(names):
 		player.append( mod )
 
 
+def load_seriescolor_plugin(name):
+	'''Load the series color plug-in specified by the SERIESCOLOR_PLUGIN from
+	the plugins/seriescolor folder.
+	'''
+	global seriescolor
+	mod = __import__('plugin.seriescolor.%s' % name)
+	mod = getattr(mod.seriescolor, name)
+	seriescolor = mod.seriescolor
+
+
 def get_mc():
 	'''Returns a Memcached client. If there is none for the current application
 	context it will create a new.
@@ -179,9 +189,10 @@ def prepare_episode(data):
 		contributor = [ c.childNodes[0].data 
 				for c in media.getElementsByTagNameNS('*', 'contributor') ]
 
+		color = seriescolor(series, seriestitle, app.config) if seriescolor else '000000'
 
 		episodes.append( {'id':id, 'title':title, 'series':series,
-			'seriescolor':idtocolor(series),
+			'seriescolor':color,
 			'seriestitle':seriestitle, 'img':img, 'player':player_html,
 			'creator':creator, 'contributor':contributor, 'date':date} )
 	return episodes
@@ -212,26 +223,12 @@ def prepare_series(data):
 		contributor = [ c.childNodes[0].data 
 				for c in result.getElementsByTagNameNS('*', 'dcContributor') ]
 
+		color = seriescolor(id, title, app.config) if seriescolor else '000000'
+
 		series.append( {'id':id, 'title':title, 'creator':creator,
-			'color':idtocolor(id), 'date':date,
+			'color':color, 'date':date,
 			'contributor':contributor} )
 	return series
-
-
-def idtocolor(id):
-	rgb_max = [100,100,100]
-	rgb_offset = [0] * 3
-	rgb = [0, 0, 0]
-	i = 0
-	for c in id:
-		rgb[i] += ord(c)
-		i = (i+1) % 3;
-
-	rgb[0] = '%0.2x' % ((rgb[0] % rgb_max[0]) + rgb_offset[0])
-	rgb[1] = '%0.2x' % ((rgb[1] % rgb_max[1]) + rgb_offset[1])
-	rgb[2] = '%0.2x' % ((rgb[2] % rgb_max[2]) + rgb_offset[2])
-
-	return ''.join(rgb)
 
 
 @app.route('/')
@@ -434,6 +431,11 @@ if __name__ == '__main__':
 	# import player plugin
 	player = []
 	load_player_plugin( app.config['PLAYER_PLUGINS'] )
+
+	# import player plugin
+	seriescolor = None
+	load_seriescolor_plugin( app.config['SERIESCOLOR_PLUGIN'] )
+	print seriescolor
 
 	app.run(
 			host=(app.config.get('SERVER_HOST') or 'localhost'),

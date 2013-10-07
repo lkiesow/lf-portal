@@ -50,6 +50,13 @@ USE_MEMCACHD     = False
 MEMCACHED_HOST   = 'localhost:11211'
 CACHE_TIME_SEC   = 600
 
+# Series color generation
+SERIESCOLOR_PLUGIN        = 'sum'
+SERIESCOLOR_SUM_MAX       = [100] * 3
+SERIESCOLOR_SUM_OFFSET    = [0] * 3
+SERIESCOLOR_SUM_USE_TITLE = False
+SERIESCOLOR_SUM_USE_ID    = True
+
 # Configuration for built-in server only:
 SERVER_DEBUG = True
 SERVER_HOST  = '0.0.0.0' # Set to localhost for local access only
