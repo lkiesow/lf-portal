@@ -217,11 +217,15 @@ def prepare_series(data):
 		except:
 			pass
 
-		creator     = [ c.childNodes[0].data 
-				for c in result.getElementsByTagNameNS('*', 'dcCreator') ]
+		creator = []
+		for c in result.getElementsByTagNameNS('*', 'dcCreator'):
+			if c.childNodes:
+				creator.append( c.childNodes[0].data )
 
-		contributor = [ c.childNodes[0].data 
-				for c in result.getElementsByTagNameNS('*', 'dcContributor') ]
+		contributor = []
+		for c in result.getElementsByTagNameNS('*', 'dcContributor'):
+			if c.childNodes:
+				contributor.append( c.childNodes[0].data )
 
 		color = seriescolor(id, title, app.config) if seriescolor else '000000'
 
