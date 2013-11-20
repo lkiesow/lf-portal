@@ -28,11 +28,6 @@ sys.setdefaultencoding('utf8')
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 
-app.jinja_loader = FileSystemLoader('%s/templates/%s/' % (
-	os.path.dirname(os.path.abspath(__file__)),
-	app.config['TEMPLATE']))
-app.static_folder = 'static/%s/' % app.config['TEMPLATE']
-
 # Try to import a memcached library
 try:
 	import pylibmc
@@ -42,6 +37,26 @@ except ImportError:
 	except ImportError:
 		if app.config['USE_MEMCACHD']:
 			raise ImportError("Neither a module 'pylibmc' nor 'memcache'")
+
+
+@app.before_first_request
+def init():
+	# import player plugin
+	global player
+	player = []
+	load_player_plugin( app.config['PLAYER_PLUGINS'] )
+
+	# import player plugin
+	global seriescolor
+	seriescolor = None
+	load_seriescolor_plugin( app.config['SERIESCOLOR_PLUGIN'] )
+
+	# set template
+	app.jinja_loader = FileSystemLoader('%s/templates/%s/' % (
+		os.path.dirname(os.path.abspath(__file__)),
+		app.config['TEMPLATE']))
+	app.static_folder = 'static/%s/' % app.config['TEMPLATE']
+
 
 
 def load_player_plugin(names):
@@ -429,18 +444,7 @@ def logout():
 	response.headers['Set-Cookie'] = 'JSESSIONID=x; Expires=Wed, 09 Jun 1980 10:18:14 GMT'
 	return response
 
-
 if __name__ == '__main__':
-
-	# import player plugin
-	player = []
-	load_player_plugin( app.config['PLAYER_PLUGINS'] )
-
-	# import player plugin
-	seriescolor = None
-	load_seriescolor_plugin( app.config['SERIESCOLOR_PLUGIN'] )
-	print seriescolor
-
 	app.run(
 			host=(app.config.get('SERVER_HOST') or 'localhost'),
 			port=(app.config.get('SERVER_PORT') or 5000),
