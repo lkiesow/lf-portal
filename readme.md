@@ -57,10 +57,8 @@ Compatible with:
 Demo Installation
 -----------------
 
-A demonstration and testing environment can be found here:
-
-	[http://repo.virtuos.uos.de:5000/](http://repo.virtuos.uos.de:5000/)
-
+A demonstration and testing environment can be found at 
+[http://repo.virtuos.uos.de:5000/](http://repo.virtuos.uos.de:5000/).
 It is running on a test VM and is deployed using Gunicorn with 4 worker
 processes.
 
