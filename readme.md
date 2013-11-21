@@ -53,6 +53,16 @@ Compatible with:
 	</dd>
 </dl>
 
+-----------------
+Demo Installation
+-----------------
+
+A demonstration and testing environment can be found here:
+
+	[http://repo.virtuos.uos.de:5000/](http://repo.virtuos.uos.de:5000/)
+
+It is running on a test VM and is deployed using Gunicorn with 4 worker
+processes.
 
 ---------------
 Getting Started
