@@ -6,12 +6,12 @@
 	<li style="background-color: #{{ s.color }};">
 		<a href="{{ url_for('series', id=s.id) }}">
 			<h3>{{ s.title }}</h3>
-			{% for c in s.creator %}
-			<span>{{ c }}</span>
-			{% endfor %}
-			{% for c in s.contributor %}
-			<span>{{ c }}</span>
-			{% endfor %}
+			<dl>
+				<dt>Creator</dt>
+				<dd>{{ ', '.join(s.creator or []) }}
+				<dt>Contributor</dt>
+				<dd>{{ ', '.join(s.contributor or []) }}</dd>
+			</dl>
 			{% if s.description %}
 			<p>{{ s.description }}</p>
 			{% endif %}

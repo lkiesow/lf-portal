@@ -225,15 +225,26 @@ nav a:hover {
 
 .series li {
 	margin: 15px;
-	padding: 10px;
+	padding: 20px;
 	vertical-align: top;
 	background-color: #eee;
+	display: inline-block;
+	width: 270px;
+	min-height: 200px;
 }
 
-.series li span {
-	display: inline-block;
-	margin: 5px;
-	padding: 5px 15px;
+.series li dt {
+	font-size: smaller;
+	font-weight: bold;
+	display: block;
+}
+
+.series li dd {
+	font-size: smaller;
+	display: inline;
+	padding: 0px;
+	padding-left: 10px;
+	margin: 0px;
 }
 
 .series li p {
